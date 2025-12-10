@@ -25,7 +25,7 @@ def initialize_browser_state(playwright: Playwright) -> None:
     registration_button = page.get_by_test_id('registration-page-registration-button')
     registration_button.click()
 
-    context.storage_state(path="browser-state.json")
+    context.storage_state(path="../tests/browser-state.json")
     yield
     context.close()
     browser.close()
