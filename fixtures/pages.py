@@ -1,8 +1,9 @@
 import pytest
 from playwright.sync_api import Page
 
+from pages.dashboard_page import DashboardPage
 from pages.login_page import LoginPage
-from pages.registration_page import RegistrationPage, DashboardPage
+from pages.registration_page import RegistrationPage
 
 
 @pytest.fixture
