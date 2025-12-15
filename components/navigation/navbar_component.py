@@ -1,9 +1,13 @@
+"""Компонент навигационного бара."""
+
 from playwright.sync_api import Page, expect
 
 from components.base_component import BaseComponent
 
 
 class NavbarComponent(BaseComponent):
+    """Проверяет заголовок приложения и приветствие пользователя."""
+
     def __init__(self, page: Page):
         super().__init__(page)
 
@@ -11,6 +15,7 @@ class NavbarComponent(BaseComponent):
         self.welcome_title = page.get_by_test_id('navigation-navbar-welcome-title-text')
 
     def check_visible(self, username: str):
+        """Убеждается, что приветствие соответствует переданному пользователю."""
         expect(self.app_title).to_be_visible()
         expect(self.app_title).to_have_text('UI Course')
 
