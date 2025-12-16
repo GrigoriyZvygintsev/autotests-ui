@@ -1,8 +1,9 @@
-"""Компонент тулбара дашборда."""
+"""Компонент тулбара дашборда (Page Factory)."""
 
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page
 
 from components.base_component import BaseComponent
+from elements.text import Text
 
 
 class DashboardToolbarViewComponent(BaseComponent):
@@ -10,9 +11,9 @@ class DashboardToolbarViewComponent(BaseComponent):
 
     def __init__(self, page: Page):
         super().__init__(page)
-        self.title = page.get_by_test_id('dashboard-toolbar-title-text')
+        self.title = Text(page, 'dashboard-toolbar-title-text', 'Заголовок Dashboard')
 
     def check_visible(self):
         """Проверяет, что заголовок дашборда виден и корректен."""
-        expect(self.title).to_be_visible()
-        expect(self.title).to_have_text('Dashboard')
+        self.title.check_visible()
+        self.title.check_have_text('Dashboard')

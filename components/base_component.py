@@ -1,6 +1,6 @@
 """Базовые инструменты для компонент Page Object."""
 
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page
 from typing import Pattern
 
 
@@ -13,4 +13,4 @@ class BaseComponent:
 
     def check_current_url(self, expected_url: Pattern[str]):
         """Сравнивает текущий URL страницы с переданным шаблоном."""
-        expect(self.page).to_have_url(expected_url)
+        self.page.wait_for_url(expected_url)

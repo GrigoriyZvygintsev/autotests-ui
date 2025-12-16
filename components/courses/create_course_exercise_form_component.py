@@ -1,12 +1,25 @@
 """Компонент формы упражнений при создании курса."""
 
-from playwright.sync_api import expect
+from playwright.sync_api import Page
 
 from components.base_component import BaseComponent
+from elements.button import Button
+from elements.input import Input
+from elements.text import Text
+
 
 
 class CreateCourseExerciseFormComponent(BaseComponent):
     """Управляет блоками упражнений: удаление, ввод и проверки."""
+    def __init__(self, page: Page):
+        super().__init__(page)
+
+        self.delete_exercise_button = Button(
+            page, 'create-course-exercise-{index}-box-toolbar-delete-exercise-button', 'Delete exercise'
+        )
+        self.subtitle = Text(page, 'create-course-exercise-{index}-box-toolbar-subtitle-text', 'Exercise subtitle')
+        self.title_input = Input(page, 'create-course-exercise-form-title-{index}-input', 'Title')
+        self.description_input = Input(page, 'create-course-exercise-form-description-{index}-input', 'Description')
 
     def click_delete_button(self, index: int):
         """Удаляет упражнение по индексу через тулбар."""
@@ -17,26 +30,24 @@ class CreateCourseExerciseFormComponent(BaseComponent):
 
     def check_visible(self, index: int, title: str, description: str):
         """Проверяет отображение заголовка и значений формы."""
-        subtitle = self.page.get_by_test_id(f"create-course-exercise-{index}-box-toolbar-subtitle-text")
-        title_input = self.page.get_by_test_id(f"create-course-exercise-form-title-{index}-input")
-        description_input = self.page.get_by_test_id(f"create-course-exercise-form-description-{index}-input")
 
-        expect(subtitle).to_be_visible()
-        expect(subtitle).to_have_text(f"#{index + 1} Exercise")
+        self.subtitle.check_visible(index=index)
+        self.subtitle.check_have_text(f"#{index + 1} Exercise", index=index)
 
-        expect(title_input).to_be_visible()
-        expect(title_input).to_have_value(title)
+        self.title_input.check_visible(index=index)
+        self.title_input.check_have_text(title, index=index)
 
-        expect(description_input).to_be_visible()
-        expect(description_input).to_have_value(description)
+        self.description_input.check_visible(index=index)
+        self.description_input.check_have_text(description, index=index)
+
 
     def fill(self, index: int, title: str, description: str):
         """Заполняет поля упражнения указанными данными."""
-        title_input = self.page.get_by_test_id(f"create-course-exercise-form-title-{index}-input")
-        description_input = self.page.get_by_test_id(f"create-course-exercise-form-description-{index}-input")
 
-        title_input.fill(title)
-        expect(title_input).to_have_value(title)
 
-        description_input.fill(description)
-        expect(description_input).to_have_value(description)
+        self.title_input.fill(title)
+        self.title_input.check_have_text(title, index=index)
+
+        self.description_input.fill(description)
+        self.description_input.check_have_text(description, index=index)
+
