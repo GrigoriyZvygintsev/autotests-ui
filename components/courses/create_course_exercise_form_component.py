@@ -15,7 +15,7 @@ class CreateCourseExerciseFormComponent(BaseComponent):
         super().__init__(page)
 
         self.delete_exercise_button = Button(
-            page, 'create-course-exercise-{index}-box-toolbar-delete-exercise-button', 'Delete exercise'
+            page, 'create-course-exercise-{index}-box-toolbar-delete-exercise-button', 'Delete exercise button'
         )
         self.subtitle = Text(page, 'create-course-exercise-{index}-box-toolbar-subtitle-text', 'Exercise subtitle')
         self.title_input = Input(page, 'create-course-exercise-form-title-{index}-input', 'Title')
@@ -23,10 +23,7 @@ class CreateCourseExerciseFormComponent(BaseComponent):
 
     def click_delete_button(self, index: int):
         """Удаляет упражнение по индексу через тулбар."""
-        delete_button = self.page.get_by_test_id(
-            f"create-course-exercise-{index}-box-toolbar-delete-exercise-button"
-        )
-        delete_button.click()
+        self.delete_exercise_button.click(index=index)
 
     def check_visible(self, index: int, title: str, description: str):
         """Проверяет отображение заголовка и значений формы."""
