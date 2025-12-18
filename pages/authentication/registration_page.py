@@ -1,4 +1,5 @@
 """Page Object страницы регистрации."""
+from typing import re
 
 from playwright.sync_api import Page
 
@@ -25,3 +26,4 @@ class RegistrationPage(BasePage):
     def click_login_button(self):
         """Возвращает пользователя к странице входа."""
         self.login_button.click()
+        self.check_current_url(re.compile(".*/#/auth/login"))
