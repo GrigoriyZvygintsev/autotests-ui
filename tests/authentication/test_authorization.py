@@ -13,6 +13,7 @@ from tools.allure.tags import AllureTag
 
 @pytest.mark.regression
 @pytest.mark.authorization
+
 @allure.tag(AllureTag.REGRESSION, AllureTag.AUTHORIZATION)
 @allure.epic(AllureEpic.LMS)
 @allure.feature(AllureFeature.AUTHENTICATION)
