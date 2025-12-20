@@ -27,7 +27,6 @@ class CoursesListToolbarViewComponent(BaseComponent):
 
         self.create_course_button.check_visible()
 
-    @allure.step('Click create course exercise button')
     def click_create_course_button(self):
         """Нажимает кнопку и проверяет переход на создание курса."""
         self.create_course_button.click()
