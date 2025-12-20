@@ -1,5 +1,5 @@
 """Компонент карточки курса в списке курсов."""
-
+import allure
 from playwright.sync_api import Page, expect
 
 from components.base_component import BaseComponent
@@ -22,6 +22,7 @@ class CourseViewComponent(BaseComponent):
         self.min_score_text = Text(page,'course-min-score-info-row-view-text', 'Min Score')
         self.estimated_time_text = Text(page,'course-estimated-time-info-row-view-text', 'Estimated Time')
 
+    @allure.step('Check visible course view at index "{index}"')
     def check_visible(
         self,
         index: int,

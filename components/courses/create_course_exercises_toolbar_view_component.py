@@ -1,5 +1,5 @@
 """Компонент тулбара блока упражнений при создании курса."""
-
+import allure
 from playwright.sync_api import Page, expect
 
 from components.base_component import BaseComponent
@@ -17,6 +17,7 @@ class CreateCourseExercisesToolbarViewComponent(BaseComponent):
             page, 'create-course-exercises-box-toolbar-create-exercise-button', 'Create exercise button'
         )
 
+    @allure.step('Check visible title exercise and button')
     def check_visible(self):
         """Убеждается, что заголовок и кнопка отображаются."""
         self.title.check_visible()

@@ -1,5 +1,5 @@
 """Компонент навигационного бара."""
-
+import allure
 from playwright.sync_api import Page
 
 from components.base_component import BaseComponent
@@ -15,6 +15,7 @@ class NavbarComponent(BaseComponent):
         self.app_title = Text(page, 'navigation-navbar-app-title-text', 'App')
         self.welcome_title = Text(page, 'navigation-navbar-welcome-title-text', 'Welcome')
 
+    @allure.step('Check visible for user: "{username}"')
     def check_visible(self, username: str):
         """Убеждается, что приветствие соответствует переданному пользователю."""
         self.app_title.check_visible()

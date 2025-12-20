@@ -1,7 +1,8 @@
 """Компонент формы создания курса."""
 
-from playwright.sync_api import Page, expect
+import allure
 
+from playwright.sync_api import Page, expect
 from components.base_component import BaseComponent
 from elements.input import Input
 from elements.textarea import Textarea
@@ -19,6 +20,7 @@ class CreateCourseFormComponent(BaseComponent):
         self.create_course_max_score_input = Input(page, 'create-course-form-max-score-input', 'Max score input')
         self.create_course_min_score_input = Input(page, 'create-course-form-min-score-input', 'Min score input')
 
+    @allure.step('Fill create course exercise form at title "{title}"')
     def fill(
         self,
         title: str,
@@ -44,6 +46,7 @@ class CreateCourseFormComponent(BaseComponent):
         self.create_course_min_score_input.fill(min_score)
         self.create_course_min_score_input.check_have_value(min_score)
 
+    @allure.step('Check visible course exercise form at title "{title}"')
     def check_visible(
         self,
         title: str,

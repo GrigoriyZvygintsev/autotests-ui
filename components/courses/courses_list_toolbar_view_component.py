@@ -1,6 +1,7 @@
 """Компонент тулбара списка курсов."""
 
 import re
+import allure
 
 from playwright.sync_api import Page, expect
 
@@ -18,6 +19,7 @@ class CoursesListToolbarViewComponent(BaseComponent):
         self.title = Text(page, 'courses-list-toolbar-title-text', 'Toolbar title text')
         self.create_course_button = Button(page, 'courses-list-toolbar-create-course-button', 'Create Course Button')
 
+    @allure.step('Check visible Toolbar')
     def check_visible(self):
         """Убеждается, что тулбар отображается корректно."""
         self.title.check_visible()
@@ -25,6 +27,7 @@ class CoursesListToolbarViewComponent(BaseComponent):
 
         self.create_course_button.check_visible()
 
+    @allure.step('Click create course exercise button')
     def click_create_course_button(self):
         """Нажимает кнопку и проверяет переход на создание курса."""
         self.create_course_button.click()
