@@ -26,6 +26,7 @@ from tools.routes import AppRoute
 @allure.sub_suite(AllureStory.AUTHORIZATION)
 class TestAuthorization:
 
+    @pytest.mark.xdist_group(name='authorization')
     @allure.tag(AllureTag.USER_LOGIN)
     @allure.severity(Severity.BLOCKER)
     @allure.title("User login with correct email and password")
@@ -47,6 +48,7 @@ class TestAuthorization:
         dashboard_page.navbar.check_visible(settings.test_user.username)
         dashboard_page.sidebar.check_visible()
 
+    @pytest.mark.xdist_group(name='authorization')
     @allure.tag(AllureTag.NAVIGATION)
     @allure.severity(Severity.NORMAL)
     @allure.title("Navigation from login page to registration page")  # Добавили заголовок

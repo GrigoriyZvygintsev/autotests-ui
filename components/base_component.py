@@ -1,7 +1,12 @@
 """Базовые инструменты для компонент Page Object."""
+import allure
 
 from playwright.sync_api import Page
 from typing import Pattern
+from tools.logger import get_logger
+
+
+logger = get_logger("BASE_COMPONENT")
 
 
 class BaseComponent:
@@ -13,4 +18,7 @@ class BaseComponent:
 
     def check_current_url(self, expected_url: Pattern[str]):
         """Сравнивает текущий URL страницы с переданным шаблоном."""
-        self.page.wait_for_url(expected_url)
+        step = f'Checking that current url matches pattern "{expected_url.pattern}"'
+        with allure.step(step):
+            logger.info(step)
+            self.page.wait_for_url(expected_url)
