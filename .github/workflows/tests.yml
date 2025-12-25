@@ -14,26 +14,30 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
+      # Стадия: забираем код репозитория на runner.
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Стадия: поднимаем нужную версию Python.
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
+      # Стадия: ставим зависимости проекта и браузеры Playwright.
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           playwright install --with-deps
 
+      # Стадия: запускаем тесты и формируем результаты Allure в `allure-results/`.
       - name: Run Playwright tests with pytest and generate Allure results
         run: |
           pytest -m regression --alluredir=allure-results --numprocesses 2
 
       - name: Upload allure-results artifact
-        # Артефакт нужен второй джобе: между джобами не шарится рабочая директория.
+        # Стадия: сохраняем `allure-results/` как артефакт для следующей джобы.
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
@@ -44,9 +48,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: run-tests
     steps:
+      # Стадия: забираем код репозитория (нужен для action-ов и структуры проекта).
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Стадия: скачиваем `allure-results/`, сохранённые в run-tests.
       - name: Download allure-results artifact
         uses: actions/download-artifact@v4
         with:
@@ -54,7 +60,7 @@ jobs:
           path: allure-results
 
       - name: Get Allure history
-        # Забираем предыдущую историю отчётов из ветки `gh-pages`, чтобы Allure строил тренды.
+        # Стадия: забираем историю отчётов из ветки `gh-pages`, чтобы Allure строил тренды/историю.
         uses: actions/checkout@v4
         if: always()
         continue-on-error: true
@@ -62,13 +68,17 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
+      # Стадия: генерируем Allure-отчёт и обновляем `allure-history/`.
       - name: Generates Allure Report with history
-        uses: simple-elf/allure-report-action@v1.7
+        # `v1.7` больше не собирается: в Dockerfile был `openjdk:8-jre-alpine`, а этот тег удалён из Docker Hub.
+        # Начиная с `v1.13` экшен переехал на поддерживаемый образ Java (Amazon Corretto), сборка снова работает.
+        uses: simple-elf/allure-report-action@v1.13
         if: always()
         with:
           allure_results: allure-results
           allure_history: allure-history
 
+      # Стадия: публикуем Allure-отчёт в GitHub Pages (ветка `gh-pages`).
       - name: Deploy report to Github Pages
         uses: peaceiris/actions-gh-pages@v4
         if: always()
