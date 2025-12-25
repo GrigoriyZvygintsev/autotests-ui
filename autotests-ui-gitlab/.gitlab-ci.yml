@@ -1,0 +1,95 @@
+# -----------------------------------------------------------------------------
+# GitLab CI/CD: автотесты + Allure-отчёт + публикация через GitLab Pages
+#
+# Архитектура пайплайна:
+#   1) run-tests       — готовит окружение, запускает тесты, сохраняет `allure-results/`.
+#   2) publish-report  — берёт `allure-results/`, генерирует HTML-отчёт `allure-report/`, сохраняет артефакт.
+#   3) pages           — публикует `allure-report/` в GitLab Pages (логика публикации не меняется).
+# -----------------------------------------------------------------------------
+
+stages:
+  - test
+  - report
+  - deploy
+
+variables:
+  ALLURE_VERSION: "2.32.0"
+
+run-tests:
+  stage: test
+  image: ubuntu:24.04
+
+  before_script:
+    # Стадия: системные зависимости для Python + Playwright.
+    - apt-get update
+    - apt-get install -y python3.12 python3.12-venv python3-pip
+
+    # Стадия: Python venv + зависимости проекта.
+    - python3.12 -m venv venv
+    - . venv/bin/activate
+    - pip install -r requirements.txt
+
+    # Стадия: браузеры Playwright и системные зависимости.
+    - playwright install --with-deps
+
+  script:
+    # Стадия: запуск тестов (логика запуска не меняется).
+    - pytesпшt -m regression --alluredir=allure-results --numprocesses 2
+
+  artifacts:
+    paths:
+      - allure-results/
+    expire_in: 7 days
+    when: always
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+
+publish-report:
+  stage: report
+  image: ubuntu:24.04
+  needs:
+    - job: run-tests
+      artifacts: true
+
+  before_script:
+    # Стадия: утилиты для скачивания/распаковки + Java для Allure CLI.
+    - apt-get update
+    - apt-get install -y openjdk-17-jre-headless wget tar
+
+    # Стадия: скачиваем и распаковываем Allure CLI.
+    - wget "https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz"
+    - tar -xvf "allure-${ALLURE_VERSION}.tgz"
+
+  script:
+    # Стадия: генерация HTML-отчёта из `allure-results/` в `allure-report/`.
+    - "allure-${ALLURE_VERSION}/bin/allure generate allure-results -o allure-report --clean"
+
+  artifacts:
+    paths:
+      - allure-report/
+    expire_in: 7 days
+    when: always
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+
+pages:
+  stage: deploy
+  image: ubuntu:24.04
+  needs:
+    - job: publish-report
+      artifacts: true
+
+  script:
+    - mkdir -p public
+    - cp -r allure-report/* public/
+
+  artifacts:
+    paths:
+      - public
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
